@@ -37,7 +37,6 @@ public class FaweRegenerator implements WorldRegenerator {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             try (EditSession session = WorldEdit.getInstance().newEditSessionBuilder()
                     .world(bukkitWorld)
-                    .maxBlocks(Integer.MAX_VALUE)
                     .fastMode(true)
                     .changeSetNull()
                     .limitUnlimited()
@@ -60,7 +59,6 @@ public class FaweRegenerator implements WorldRegenerator {
         Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
             try (EditSession session = WorldEdit.getInstance().newEditSessionBuilder().world(bukkitWorld)
                     .fastMode(true)
-                    .maxBlocks(Integer.MAX_VALUE)
                     .changeSetNull()
                     .limitUnlimited()
                     .compile()
