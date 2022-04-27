@@ -17,7 +17,6 @@ import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.database.objects.IslandDeletion;
 import world.bentobox.bentobox.nms.WorldRegenerator;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -67,14 +66,10 @@ public class FaweRegenerator implements WorldRegenerator {
                     .compile()
                     .build()
             ) {
-                List<EntityVisitor> visitors = new ArrayList<>();
                 session.setMask(null);
                 session.setSourceMask(null);
                 List<? extends Entity> entities = session.getEntities(region);
-                visitors.add(new EntityVisitor(entities.iterator(), Entity::remove));
-                for (EntityVisitor visitor : visitors) {
-                    Operations.completeLegacy(visitor);
-                }
+                Operations.completeLegacy(new EntityVisitor(entities.iterator(), Entity::remove));
             } finally {
                 entityFuture.complete(null);
             }
