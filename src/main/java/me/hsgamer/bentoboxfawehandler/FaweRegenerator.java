@@ -16,13 +16,13 @@ import org.bukkit.util.BoundingBox;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.database.objects.IslandDeletion;
-import world.bentobox.bentobox.nms.NMSAbstraction;
+import world.bentobox.bentobox.nms.WorldRegenerator;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-public class FaweRegenerator implements NMSAbstraction {
+public class FaweRegenerator implements WorldRegenerator {
     private final BentoBox plugin = BentoBox.getInstance();
 
     @Override
