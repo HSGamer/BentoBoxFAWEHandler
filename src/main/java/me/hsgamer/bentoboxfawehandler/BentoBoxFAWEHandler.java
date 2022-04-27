@@ -7,6 +7,7 @@ public final class BentoBoxFAWEHandler extends Addon {
     @Override
     public void onEnable() {
         Util.setRegenerator(new FaweRegenerator());
+        Util.setPasteHandler(new FawePaster());
     }
 
     @Override

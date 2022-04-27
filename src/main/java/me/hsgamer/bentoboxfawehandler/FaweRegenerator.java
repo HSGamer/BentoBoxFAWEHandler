@@ -51,7 +51,6 @@ public class FaweRegenerator implements WorldRegenerator {
                         .seed(world.getSeed())
                         .build();
                 bukkitWorld.regenerate(region, session, options);
-
             } finally {
                 blockFuture.complete(null);
             }
