@@ -48,15 +48,13 @@ public class FawePaster implements PasteHandler {
             }
         });
 
-        CompletableFuture<Void> stateFuture = blockFuture.thenRun(() -> {
-            map.forEach((location, blueprintBlock) -> {
-                Block block = location.getBlock();
-                DefaultPasteUtil.setBlockState(island, block, blueprintBlock);
-                if (blueprintBlock.getBiome() != null) {
-                    block.setBiome(blueprintBlock.getBiome());
-                }
-            });
-        });
+        CompletableFuture<Void> stateFuture = blockFuture.thenRun(() -> map.forEach((location, blueprintBlock) -> {
+            Block block = location.getBlock();
+            DefaultPasteUtil.setBlockState(island, block, blueprintBlock);
+            if (blueprintBlock.getBiome() != null) {
+                block.setBiome(blueprintBlock.getBiome());
+            }
+        }));
         return CompletableFuture.allOf(blockFuture, stateFuture);
     }
 
