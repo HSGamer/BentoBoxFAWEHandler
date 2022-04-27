@@ -35,7 +35,6 @@ public class FawePaster implements PasteHandler {
                 session.setMask(null);
                 session.setSourceMask(null);
                 map.forEach((location, blueprintBlock) -> {
-                    DefaultPasteUtil.convertBlockData(blueprintBlock);
                     session.setBlock(
                             location.getBlockX(), location.getBlockY(), location.getBlockZ(),
                             BukkitAdapter.adapt(DefaultPasteUtil.convertBlockData(blueprintBlock))
