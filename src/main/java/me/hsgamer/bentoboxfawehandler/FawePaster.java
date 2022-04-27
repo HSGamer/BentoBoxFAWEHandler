@@ -5,6 +5,7 @@ import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBlock;
@@ -21,12 +22,10 @@ public class FawePaster implements PasteHandler {
     private final BentoBox plugin = BentoBox.getInstance();
 
     @Override
-    public CompletableFuture<Void> pasteBlocks(Island island, Map<Location, BlueprintBlock> map) {
-        com.sk89q.worldedit.world.World bukkitWorld = BukkitAdapter.adapt(island.getWorld());
-
+    public CompletableFuture<Void> pasteBlocks(Island island, World world, Map<Location, BlueprintBlock> map) {
         CompletableFuture<Void> blockFuture = new CompletableFuture<>();
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-            try (EditSession session = WorldEdit.getInstance().newEditSessionBuilder().world(bukkitWorld)
+            try (EditSession session = WorldEdit.getInstance().newEditSessionBuilder().world(BukkitAdapter.adapt(world))
                     .fastMode(true)
                     .changeSetNull()
                     .limitUnlimited()
@@ -59,7 +58,7 @@ public class FawePaster implements PasteHandler {
     }
 
     @Override
-    public CompletableFuture<Void> pasteEntities(Island island, Map<Location, List<BlueprintEntity>> map) {
+    public CompletableFuture<Void> pasteEntities(Island island, World world, Map<Location, List<BlueprintEntity>> map) {
         map.forEach((location, list) -> DefaultPasteUtil.setEntity(island, location, list));
         return CompletableFuture.completedFuture(null);
     }
