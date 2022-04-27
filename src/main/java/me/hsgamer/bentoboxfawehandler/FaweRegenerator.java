@@ -3,7 +3,6 @@ package me.hsgamer.bentoboxfawehandler;
 import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
-import com.sk89q.worldedit.command.util.EntityRemover;
 import com.sk89q.worldedit.entity.Entity;
 import com.sk89q.worldedit.function.operation.Operations;
 import com.sk89q.worldedit.function.visitor.EntityVisitor;
@@ -39,6 +38,7 @@ public class FaweRegenerator implements WorldRegenerator {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             try (EditSession session = WorldEdit.getInstance().newEditSessionBuilder()
                     .world(bukkitWorld)
+                    .maxBlocks(Integer.MAX_VALUE)
                     .fastMode(true)
                     .changeSetNull()
                     .limitUnlimited()
@@ -61,6 +61,7 @@ public class FaweRegenerator implements WorldRegenerator {
         Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
             try (EditSession session = WorldEdit.getInstance().newEditSessionBuilder().world(bukkitWorld)
                     .fastMode(true)
+                    .maxBlocks(Integer.MAX_VALUE)
                     .changeSetNull()
                     .limitUnlimited()
                     .compile()
@@ -70,7 +71,7 @@ public class FaweRegenerator implements WorldRegenerator {
                 session.setMask(null);
                 session.setSourceMask(null);
                 List<? extends Entity> entities = session.getEntities(region);
-                visitors.add(new EntityVisitor(entities.iterator(), EntityRemover.fromString("all").createFunction()));
+                visitors.add(new EntityVisitor(entities.iterator(), Entity::remove));
                 for (EntityVisitor visitor : visitors) {
                     Operations.completeLegacy(visitor);
                 }

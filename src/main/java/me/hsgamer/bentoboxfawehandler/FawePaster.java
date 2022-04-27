@@ -27,6 +27,7 @@ public class FawePaster implements PasteHandler {
         Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
             try (EditSession session = WorldEdit.getInstance().newEditSessionBuilder()
                     .world(bukkitWorld)
+                    .maxBlocks(Integer.MAX_VALUE)
                     .forceWNA()
                     .fastMode(true)
                     .changeSetNull()
