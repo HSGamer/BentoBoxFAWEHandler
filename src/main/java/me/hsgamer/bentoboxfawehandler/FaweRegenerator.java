@@ -37,7 +37,8 @@ public class FaweRegenerator implements WorldRegenerator {
 
         CompletableFuture<Void> blockFuture = new CompletableFuture<>();
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-            try (EditSession session = WorldEdit.getInstance().newEditSessionBuilder().world(bukkitWorld)
+            try (EditSession session = WorldEdit.getInstance().newEditSessionBuilder()
+                    .world(bukkitWorld)
                     .fastMode(true)
                     .changeSetNull()
                     .limitUnlimited()

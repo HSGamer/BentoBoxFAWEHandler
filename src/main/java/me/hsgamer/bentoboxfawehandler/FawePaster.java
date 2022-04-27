@@ -6,7 +6,6 @@ import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.block.Block;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBlock;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintEntity;
@@ -23,9 +22,12 @@ public class FawePaster implements PasteHandler {
 
     @Override
     public CompletableFuture<Void> pasteBlocks(Island island, World world, Map<Location, BlueprintBlock> map) {
+        com.sk89q.worldedit.world.World bukkitWorld = BukkitAdapter.adapt(world);
         CompletableFuture<Void> blockFuture = new CompletableFuture<>();
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-            try (EditSession session = WorldEdit.getInstance().newEditSessionBuilder().world(BukkitAdapter.adapt(world))
+        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+            try (EditSession session = WorldEdit.getInstance().newEditSessionBuilder()
+                    .world(bukkitWorld)
+                    .forceWNA()
                     .fastMode(true)
                     .changeSetNull()
                     .limitUnlimited()
@@ -34,29 +36,37 @@ public class FawePaster implements PasteHandler {
             ) {
                 session.setMask(null);
                 session.setSourceMask(null);
-                map.forEach((location, blueprintBlock) -> session.setBlock(
-                        location.getBlockX(), location.getBlockY(), location.getBlockZ(),
-                        BukkitAdapter.adapt(DefaultPasteUtil.createBlockData(blueprintBlock))
-                ));
+                map.forEach((location, blueprintBlock) -> {
+                    session.setBlock(
+                            location.getBlockX(), location.getBlockY(), location.getBlockZ(),
+                            BukkitAdapter.adapt(DefaultPasteUtil.createBlockData(blueprintBlock))
+                    );
+                    if (blueprintBlock.getBiome() != null) {
+                        session.setBiome(
+                                location.getBlockX(), location.getBlockY(), location.getBlockZ(),
+                                BukkitAdapter.adapt(blueprintBlock.getBiome())
+                        );
+                    }
+                });
                 session.flushQueue();
             } finally {
                 blockFuture.complete(null);
             }
         });
 
-        CompletableFuture<Void> stateFuture = blockFuture.thenRun(() -> map.forEach((location, blueprintBlock) -> {
-            Block block = location.getBlock();
-            DefaultPasteUtil.setBlockState(island, block, blueprintBlock);
-            if (blueprintBlock.getBiome() != null) {
-                block.setBiome(blueprintBlock.getBiome());
-            }
-        }));
+        CompletableFuture<Void> stateFuture = blockFuture.thenRun(() -> map.forEach((location, blueprintBlock) ->
+                DefaultPasteUtil.setBlockState(island, location.getBlock(), blueprintBlock))
+        );
         return CompletableFuture.allOf(blockFuture, stateFuture);
     }
 
     @Override
     public CompletableFuture<Void> pasteEntities(Island island, World world, Map<Location, List<BlueprintEntity>> map) {
-        map.forEach((location, list) -> DefaultPasteUtil.setEntity(island, location, list));
-        return CompletableFuture.completedFuture(null);
+        CompletableFuture<Void> entityFuture = new CompletableFuture<>();
+        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+            map.forEach((location, list) -> DefaultPasteUtil.setEntity(island, location, list));
+            entityFuture.complete(null);
+        });
+        return entityFuture;
     }
 }
