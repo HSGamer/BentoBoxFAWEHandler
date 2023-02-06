@@ -10,6 +10,7 @@ import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.RegenOptions;
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.util.BoundingBox;
 import world.bentobox.bentobox.BentoBox;
@@ -73,5 +74,41 @@ public class FaweRegenerator implements WorldRegenerator {
             }
         });
         return CompletableFuture.allOf(blockFuture, entityFuture);
+    }
+
+    @Override
+    public CompletableFuture<Void> regenerateChunk(Chunk chunk) {
+        World world = chunk.getWorld();
+        com.sk89q.worldedit.world.World bukkitWorld = BukkitAdapter.adapt(chunk.getWorld());
+        CompletableFuture<Void> blockFuture = new CompletableFuture<>();
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+            try (EditSession session = WorldEdit.getInstance().newEditSessionBuilder()
+                    .world(bukkitWorld)
+                    .fastMode(true)
+                    .changeSetNull()
+                    .limitUnlimited()
+                    .compile()
+                    .build()
+            ) {
+                session.setMask(null);
+                session.setSourceMask(null);
+                RegenOptions options = RegenOptions.builder()
+                        .regenBiomes(true)
+                        .seed(world.getSeed())
+                        .build();
+                bukkitWorld.regenerate(
+                        new CuboidRegion(
+                                bukkitWorld,
+                                BlockVector3.at(chunk.getX() << 4, world.getMinHeight(), chunk.getZ() << 4),
+                                BlockVector3.at((chunk.getX() << 4) + 15, world.getMaxHeight() - 1, (chunk.getZ() << 4) + 15)
+                        ),
+                        session,
+                        options
+                );
+            } finally {
+                blockFuture.complete(null);
+            }
+        });
+        return blockFuture;
     }
 }
