@@ -12,6 +12,8 @@
     <description>Integrate FAWE to BentoBox</description>
 
     <properties>
+        <bentobox.version>1.22.0</bentobox.version>
+        <fawe.version>2.6.0</fawe.version>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
     </properties>
@@ -47,13 +49,13 @@
         <dependency>
             <groupId>world.bentobox</groupId>
             <artifactId>bentobox</artifactId>
-            <version>1.22.0-SNAPSHOT</version>
+            <version>${bentobox.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.fastasyncworldedit</groupId>
             <artifactId>FastAsyncWorldEdit-Core</artifactId>
-            <version>2.5.1</version>
+            <version>${fawe.version}</version>
             <scope>provided</scope>
             <exclusions>
                 <exclusion>
@@ -65,7 +67,7 @@
         <dependency>
             <groupId>com.fastasyncworldedit</groupId>
             <artifactId>FastAsyncWorldEdit-Bukkit</artifactId>
-            <version>2.5.1</version>
+            <version>${fawe.version}</version>
             <scope>provided</scope>
             <exclusions>
                 <exclusion>
