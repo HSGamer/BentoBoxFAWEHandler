@@ -6,7 +6,7 @@
 
     <groupId>me.hsgamer</groupId>
     <artifactId>bentobox-fawe-handler</artifactId>
-    <version>1.1.0-SNAPSHOT</version>
+    <version>1.1.0</version>
 
     <name>BentoBoxFAWEHandler</name>
     <description>Integrate FAWE to BentoBox</description>
